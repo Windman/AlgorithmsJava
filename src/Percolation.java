@@ -48,7 +48,7 @@ public class Percolation {
 
 	public void open(int i, int j) // open site (row i, column j) if it is not open already
 	{
-		if (i <= 0 || i > _n) throw new IndexOutOfBoundsException("row index i out of bounds");
+ 		if (i <= 0 || i > _n) throw new IndexOutOfBoundsException("row index i out of bounds");
 		if (j <= 0 || j > _n) throw new IndexOutOfBoundsException("row index j out of bounds");
 		
 		int idx = xyTo1D(i,j);
@@ -57,13 +57,19 @@ public class Percolation {
 			_grid[idx].setOpen();
 		
 		if (i == 1)
-			_qu.union(idx, _virtTopIdx);
+			_qu.union(_virtTopIdx, idx);
 		else if(i==_n)
-			_qu.union(idx, _virtBottomIdx);
-		else if (_grid[xyTo1D(i,j+1)].isOpen())
+			_qu.union(_virtBottomIdx, idx);
+		
+		if (_grid[xyTo1D(i,j+1)].isOpen())
 			_qu.union(idx, xyTo1D(i,j+1));
-		else if (_grid[xyTo1D(i,j-1)].isOpen())
+		if (_grid[xyTo1D(i,j-1)].isOpen())
 			_qu.union(idx, xyTo1D(i,j-1));
+		if ((i+1) <= _n && _grid[xyTo1D(i+1,j)].isOpen())
+			_qu.union(idx, xyTo1D(i+1,j));
+		if ((i-1) > 0 && _grid[xyTo1D(i-1,j)].isOpen())
+			_qu.union(idx, xyTo1D(i-1,j));
+		
 	}
 	
 	public boolean isOpen(int i, int j) // is site (row i, column j) open?
@@ -79,9 +85,13 @@ public class Percolation {
 	{
 		boolean res = false;
 		int idx = xyTo1D(i,j);
-		if(_qu.connected(idx, _virtBottomIdx) || _qu.connected(idx, _virtTopIdx))
+		if (_qu.connected(idx, _virtBottomIdx) || _qu.connected(idx, _virtTopIdx))
 			res = true;
-		else if(_qu.connected(idx, xyTo1D(i,j+1)) || _qu.connected(idx, xyTo1D(i,j-1)))
+		else if (_qu.connected(idx, xyTo1D(i,j+1)) || _qu.connected(idx, xyTo1D(i,j-1)))
+			res = true;
+		else if ((i+1)<=_n && _qu.connected(idx, xyTo1D(i+1,j)))
+			res = true;
+		else if((i-1)>0 && _qu.connected(idx, xyTo1D(i-1,j)))
 			res = true;
 		return res;
 	}
