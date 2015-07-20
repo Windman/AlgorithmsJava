@@ -1,120 +1,154 @@
+/**
+ * @author Maksim Kilovatiy Percolation implementation
+ */
 public class Percolation {
 
-	private class Site
-	{
-		//написать реализацию класса
-		private boolean _isopen;
-			
-		public Site(){
-			Init();
+	/**
+	 * Site structure
+	 *
+	 */
+	private class Site {
+		private boolean isopen;
+
+		public Site() {
+			isopen = false;
 		}
-		
-		private void Init(){
-			_isopen = false;
+
+		public boolean isOpen() {
+			return isopen;
 		}
-		
-		public boolean isOpen(){
-			return _isopen;
-		}
-		
-		public void setOpen(){
-			_isopen = true;
+
+		public void setOpen() {
+			isopen = true;
 		}
 	}
-	
-	Site[] _grid;
-	int _gridSize;
-	int _n;
-	WeightedQuickUnionUF _qu;
-	
-	int _virtTopIdx, _virtBottomIdx;
-	
-	public Percolation(int N) // create N-by-N grid, with all sites blocked
-	{
-		_n = N;
+
+	Site[] grid;
+	int gridSize;
+	int size;
+	WeightedQuickUnionUF qunion;
+
+	int virtTopIdx, virtBottomIdx;
+
+	/**
+	 * create N-by-N grid, with all sites blocked
+	 * 
+	 * @param n
+	 *            matrix size
+	 */
+	public Percolation(final int n) {
+
+		if (n <= 0) {
+			throw new java.lang.IllegalArgumentException("n or t are <= 0");
+		}
+		size = n;
 		int virtVertices = 2;
-		_gridSize = _n*_n+virtVertices;
-		_grid = new Site[_gridSize];
-		
-		for (int i = 0; i < _grid.length; i++) {
-			_grid[i] = new Site();
+		gridSize = size * size + virtVertices;
+		grid = new Site[gridSize];
+
+		for (int i = 0; i < grid.length; i++) {
+			grid[i] = new Site();
 		}
-		
-		_qu = new WeightedQuickUnionUF(_gridSize);
-		
-		_virtTopIdx = 0;
-		_virtBottomIdx = _gridSize-1;
+
+		qunion = new WeightedQuickUnionUF(gridSize);
+
+		virtTopIdx = 0;
+		virtBottomIdx = gridSize - 1;
 	}
 
-	public void open(int i, int j) // open site (row i, column j) if it is not open already
-	{
- 		if (i <= 0 || i > _n) throw new IndexOutOfBoundsException("row index i out of bounds");
-		if (j <= 0 || j > _n) throw new IndexOutOfBoundsException("row index j out of bounds");
-		
-		int idx = xyTo1D(i,j);
-		
-		if(!_grid[idx].isOpen())
-			_grid[idx].setOpen();
-		
+	/**
+	 * open site (row i, column j) if it is not open already
+	 * 
+	 * @param i
+	 *            - row
+	 * @param j
+	 *            - column
+	 */
+	public void open(final int i, final int j) {
+
+		if (i <= 0 || i > size)
+			throw new IndexOutOfBoundsException("row index i out of bounds");
+		if (j <= 0 || j > size)
+			throw new IndexOutOfBoundsException("row index j out of bounds");
+
+		int idx = xyTo1D(i, j);
+
+		if (!grid[idx].isOpen())
+			grid[idx].setOpen();
+
 		if (i == 1)
-			_qu.union(_virtTopIdx, idx);
-		else if(i==_n)
-			_qu.union(_virtBottomIdx, idx);
-		
-		if (_grid[xyTo1D(i,j+1)].isOpen())
-			_qu.union(idx, xyTo1D(i,j+1));
-		if (_grid[xyTo1D(i,j-1)].isOpen())
-			_qu.union(idx, xyTo1D(i,j-1));
-		if ((i+1) <= _n && _grid[xyTo1D(i+1,j)].isOpen())
-			_qu.union(idx, xyTo1D(i+1,j));
-		if ((i-1) > 0 && _grid[xyTo1D(i-1,j)].isOpen())
-			_qu.union(idx, xyTo1D(i-1,j));
-		
+			qunion.union(virtTopIdx, idx);
+		else if (i == size)
+			qunion.union(virtBottomIdx, idx);
+
+		if (grid[xyTo1D(i, j + 1)].isOpen())
+			qunion.union(idx, xyTo1D(i, j + 1));
+		if (grid[xyTo1D(i, j - 1)].isOpen())
+			qunion.union(idx, xyTo1D(i, j - 1));
+		if ((i + 1) <= size && grid[xyTo1D(i + 1, j)].isOpen())
+			qunion.union(idx, xyTo1D(i + 1, j));
+		if ((i - 1) > 0 && grid[xyTo1D(i - 1, j)].isOpen())
+			qunion.union(idx, xyTo1D(i - 1, j));
 	}
-	
-	public boolean isOpen(int i, int j) // is site (row i, column j) open?
-	{
+
+	/**
+	 * is site (row i, column j) open?
+	 * 
+	 * @param i
+	 *            - x coord
+	 * @param j
+	 *            - y coord
+	 * @return is open
+	 */
+	public final boolean isOpen(final int i, final int j) {
 		boolean res = false;
-		int idx = xyTo1D(i,j);
-		if (_grid[idx] != null && _grid[idx]._isopen)
+		int idx = xyTo1D(i, j);
+		if (grid[idx] != null && grid[idx].isopen) {
 			res = true;
+		}
 		return res;
 	}
 
-	public boolean isFull(int i, int j) // is site (row i, column j) full?
-	{
+	/**
+	 * is site (row i, column j) full?
+	 * 
+	 * @param i
+	 *            - x coord
+	 * @param j
+	 *            - y coord
+	 * @return is full
+	 */
+	public final boolean isFull(final int i, final int j) {
 		boolean res = false;
-		int idx = xyTo1D(i,j);
-		if (_qu.connected(idx, _virtBottomIdx) || _qu.connected(idx, _virtTopIdx))
+		int idx = xyTo1D(i, j);
+		if (qunion.connected(idx, virtBottomIdx)
+				|| qunion.connected(idx, virtTopIdx)) {
 			res = true;
-		else if (_qu.connected(idx, xyTo1D(i,j+1)) || _qu.connected(idx, xyTo1D(i,j-1)))
+		} else if (qunion.connected(idx, xyTo1D(i, j + 1))
+				|| qunion.connected(idx, xyTo1D(i, j - 1))) {
 			res = true;
-		else if ((i+1)<=_n && _qu.connected(idx, xyTo1D(i+1,j)))
+		} else if ((i + 1) <= size && qunion.connected(idx, xyTo1D(i + 1, j))) {
 			res = true;
-		else if((i-1)>0 && _qu.connected(idx, xyTo1D(i-1,j)))
+		} else if ((i - 1) > 0 && qunion.connected(idx, xyTo1D(i - 1, j))) {
 			res = true;
+		}
+
 		return res;
 	}
 
-	public boolean percolates() // does the system percolate?
-	{
-		return _qu.connected(_virtBottomIdx, _virtTopIdx);
+	/**
+	 * @return does the system percolate?
+	 */
+	public boolean percolates() {
+		return qunion.connected(virtBottomIdx, virtTopIdx);
 	}
-	
-	private int xyTo1D(int row, int col)
-	{
-		return row*_n-(_n-col);
+
+	/**
+	 * @param row
+	 * @param col
+	 * @return conversion 2D into 1D
+	 */
+	private int xyTo1D(final int row, final int col) {
+		return row * size - (size - col);
 	}
-	
-	/*public static void main(String[] args)
-	{
-		Percolation p =new Percolation(3);
-		p.open(1,1);
-		p.open(1,2);
-		p.open(2,1);
-		p.open(3,1);
-		
-		
-		p.isFull(2,1);
-	}*/
 }
