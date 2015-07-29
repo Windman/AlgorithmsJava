@@ -4,15 +4,17 @@
  */
 public class PercolationStats {
 
-	int size;
-	int gridSide;
-	int numberOfExperiments;
-	Percolation engine;
-	double[] threshold;
+	private int size;
+
+	private double numberOfExperiments;
+	private double gridSide;
+	private double[] threshold;
 
 	/**
-	 * @param n- grid size
-	 * @param t- number of expeiments
+	 * @param n
+	 *            - grid size
+	 * @param t
+	 *            - number of expeiments
 	 */
 	public PercolationStats(int n, int t) {
 		if (n <= 0 || t <= 0)
@@ -21,18 +23,24 @@ public class PercolationStats {
 		size = n;
 		gridSide = size * size;
 
-		engine = new Percolation(n);
 		threshold = new double[t];
-		int percolationPoint = 1  ;
-
-		StdRandom.setSeed(System.currentTimeMillis());
-
 		for (int i = 0; i < t; i++) {
-			while(!engine.percolates()) {
-				int x = StdRandom.uniform(n-1)+1;
-				int y = StdRandom.uniform(n-1)+1;
-				engine.open(x, y);
-				percolationPoint ++;
+			double percolationPoint = 1;
+			Percolation engine = new Percolation(n);
+			while (true) {
+				int x = StdRandom.uniform(n + 1);
+				int y = StdRandom.uniform(n + 1);
+				if (x == 0 || x > size || y == 0 || y > size)
+					continue;
+				else if (engine.isOpen(x, y))
+					continue;
+				else {
+					engine.open(x, y);
+					percolationPoint++;
+				}
+				if (engine.percolates())
+					break;
+
 			}
 			threshold[i] = percolationPoint / gridSide;
 		}
@@ -41,43 +49,45 @@ public class PercolationStats {
 	/**
 	 * @return sample mean of percolation threshold public double
 	 */
-	public final double mean() {
-		int summ = 0;
+	public double mean() {
+		double summ = 0;
 		for (int i = 0; i < threshold.length; i++) {
 			summ += threshold[i];
 		}
-		return summ/numberOfExperiments;
+		return summ / numberOfExperiments;
 	}
 
 	/**
 	 * @return sample standard deviation of percolation threshold
 	 */
 	public double stddev() {
-		int summ = 0;
+		double summ = 0;
 		double m = mean();
 		for (int i = 0; i < threshold.length; i++) {
-			summ += Math.pow((threshold[i] - m),2);
+			summ += (threshold[i] - m) * (threshold[i] - m);
 		}
-		return summ/numberOfExperiments-1;
+		return summ / (numberOfExperiments - 1);
 	}
 
 	/**
 	 * @return low endpoint of 95% confidence interval
 	 */
 	public double confidenceLo() {
-		return mean() - (1.96*Math.sqrt(stddev())/Math.sqrt(numberOfExperiments));
+		return mean()
+				- (1.96 * Math.sqrt(stddev()) / Math.sqrt(numberOfExperiments));
 	}
 
 	/**
 	 * @return high endpoint of 95% confidence interval
 	 */
 	public double confidenceHi() {
-		return mean() + (1.96*Math.sqrt(stddev())/Math.sqrt(numberOfExperiments));
+		return mean()
+				+ (1.96 * Math.sqrt(stddev()) / Math.sqrt(numberOfExperiments));
 	}
 
 	public static void main(String[] args) {
-		int n = 10;//Integer.parseInt(args[0]);
-		int t = 1; //Integer.parseInt(args[1]);
+		int n = 50;// Integer.parseInt(args[0]);
+		int t = 20; // Integer.parseInt(args[1]);
 		PercolationStats s = new PercolationStats(n, t);
 		StdOut.println("mean = " + s.mean());
 		StdOut.println("stddev = " + s.stddev());

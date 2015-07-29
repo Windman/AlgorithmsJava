@@ -23,12 +23,12 @@ public class Percolation {
 		}
 	}
 
-	Site[] grid;
-	int gridSize;
-	int size;
-	WeightedQuickUnionUF qunion;
+	private Site[] grid;
+	private int gridSize;
+	private int size;
+	private WeightedQuickUnionUF qunion;
 
-	int virtTopIdx, virtBottomIdx;
+	private int virtTopIdx, virtBottomIdx;
 
 	/**
 	 * create N-by-N grid, with all sites blocked
@@ -39,7 +39,7 @@ public class Percolation {
 	public Percolation(final int n) {
 
 		if (n <= 0) {
-			throw new java.lang.IllegalArgumentException("n or t are <= 0");
+			throw new java.lang.IllegalArgumentException("n <= 0");
 		}
 		size = n;
 		int virtVertices = 2;
@@ -100,7 +100,12 @@ public class Percolation {
 	 *            - y coord
 	 * @return is open
 	 */
-	public final boolean isOpen(final int i, final int j) {
+	public boolean isOpen(int i, int j) {
+		if (i <= 0 || i > size)
+			throw new IndexOutOfBoundsException("row index i out of bounds");
+		if (j <= 0 || j > size)
+			throw new IndexOutOfBoundsException("row index j out of bounds");
+		
 		boolean res = false;
 		int idx = xyTo1D(i, j);
 		if (grid[idx] != null && grid[idx].isopen) {
@@ -118,21 +123,16 @@ public class Percolation {
 	 *            - y coord
 	 * @return is full
 	 */
-	public final boolean isFull(final int i, final int j) {
+	public boolean isFull(int i, int j) {
+		if (i <= 0 || i > size)
+			throw new IndexOutOfBoundsException("row index i out of bounds");
+		if (j <= 0 || j > size)
+			throw new IndexOutOfBoundsException("row index j out of bounds");
 		boolean res = false;
 		int idx = xyTo1D(i, j);
-		if (qunion.connected(idx, virtBottomIdx)
-				|| qunion.connected(idx, virtTopIdx)) {
-			res = true;
-		} else if (qunion.connected(idx, xyTo1D(i, j + 1))
-				|| qunion.connected(idx, xyTo1D(i, j - 1))) {
-			res = true;
-		} else if ((i + 1) <= size && qunion.connected(idx, xyTo1D(i + 1, j))) {
-			res = true;
-		} else if ((i - 1) > 0 && qunion.connected(idx, xyTo1D(i - 1, j))) {
-			res = true;
-		}
-
+		
+		if (qunion.connected(idx, virtTopIdx))
+			return true;
 		return res;
 	}
 
@@ -148,7 +148,7 @@ public class Percolation {
 	 * @param col
 	 * @return conversion 2D into 1D
 	 */
-	private int xyTo1D(final int row, final int col) {
+	private int xyTo1D(int row, int col) {
 		return row * size - (size - col);
 	}
 }
