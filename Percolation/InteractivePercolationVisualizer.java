@@ -10,7 +10,6 @@
  *  open sites (that aren't full) in white, and blocked sites in black.
  *
  ****************************************************************************/
-
 public class InteractivePercolationVisualizer {
 
     public static void main(String[] args) {

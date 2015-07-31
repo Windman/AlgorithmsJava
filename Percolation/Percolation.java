@@ -1,6 +1,7 @@
 /**
  * @author Maksim Kilovatiy Percolation implementation
  */
+
 public class Percolation {
 
 	/**
