@@ -14,12 +14,12 @@ public class Deque<Item> implements Iterable<Item> {
 
 	private void resizeLast(int max) {
 
-		Item[] temp = (Item[]) new Object[max];
-		for (int i = 0; i < N; i++) {
-			temp[i+first] = q[(first + i) % q.length];
+		Item[] temp = (Item[]) new Object[first + max];
+		for (int i = first; i < N + first; i++) {
+			temp[i] = q[i % q.length];
 		}
 		q = temp;
-		last = first+N;
+		last = first + N;
 		temp = null;
 		// StdOut.println("resized: "+q.length);
 	}
@@ -27,12 +27,14 @@ public class Deque<Item> implements Iterable<Item> {
 	private void resizeFirst(int max) {
 
 		Item[] temp = (Item[]) new Object[max];
+					
 		for (int i = 0; i < N; i++) {
-			temp[i + N] = q[(first + i) % q.length];
+			temp[i+N] = q[i+first % q.length];
 		}
 		q = temp;
 		first = N;
-		
+		if (N ==0) first = q.length; 
+				
 		temp = null;
 		// StdOut.println("resized: "+q.length);
 	}
@@ -47,26 +49,23 @@ public class Deque<Item> implements Iterable<Item> {
 	}
 
 	public void addLast(Item item) {
-		if(last<first || last < N)
-			last = first+N;
-		
+		if (last < first || last < N)
+			last = first + N;
+
 		if (last == q.length) {
 			resizeLast(2 * q.length);
 		}
-		
+
 		q[last++] = item; // add item
 
 		N++;
 	}
 
 	public void addFirst(Item item) {
-		if (first == 0) {
-			resizeFirst(2 * q.length);
-			first = q.length - N;
-		}
-		
+		if (first == 0) resizeFirst(2 * q.length);
 		q[--first] = item;
 		N++;
+		last = first + N;
 	}
 
 	public Item removeFirst() {
@@ -87,16 +86,21 @@ public class Deque<Item> implements Iterable<Item> {
 	public Item removeLast() {
 		if (isEmpty())
 			throw new NoSuchElementException("Queue underflow");
-		
-		if (q[last] == null) {
+
+		if (N > 0 && N == q.length / 4)
+			resizeLast(q.length / 2);
+
+		if(last >= q.length)
+			last--;
+		else if (q[last]==null) {
 			last--;
 		}
+
 		Item item = q[last];
 		q[last--] = null;
 		N--;
-		
-		if (N > 0 && N == q.length / 4)
-			resizeLast(q.length / 2);
+		if (last <0)
+			last = 0;
 		return item;
 	}
 
