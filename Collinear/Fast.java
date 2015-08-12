@@ -13,7 +13,7 @@ public class Fast {
 	public static void main(String[] args) {
 		Init();
 		// !!! Before publish change to args[0]
-		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input8.txt";// args[0];
+		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input20.txt";// args[0];
 		// String filename = args[0];
 		In in = new In(filename);
 		int N = in.readInt();
@@ -30,13 +30,15 @@ public class Fast {
 
 		double pSlope1 = 0.0;
 		double pSlope2 = 0.0;
-		Stack<Integer> s = null;
-		Arrays.sort(points, 0, points.length, points[0].SLOPE_ORDER);
-		pSlope1 = points[0].slopeTo(points[1]);
 		
+		Point first = null;
+		Point last = null;
+				
 		for (int i = 0; i < points.length; i++) {
 			Arrays.sort(points, i, points.length, points[i].SLOPE_ORDER);
-			for (int j = i+1; j < points.length; j++) {
+			first = points[i];
+			pSlope1 = points[i].slopeTo(points[i+1]);
+			for (int j = i; j < points.length; j++) {
 				if (i != j) {
 					pSlope2 = points[i].slopeTo(points[j]);
 					StdOut.println(points[i] +" "+ points[j].toString() +" "+ points[i].slopeTo(points[j]));
@@ -44,13 +46,21 @@ public class Fast {
 					if (pSlope1 != pSlope2) {
 						pSlope1 = pSlope2;
 						i = j-1;
-						
+						last = points[i];
 						StdOut.println("Stop index: "+i);
 						break;
+					}
+					if (j == points.length-1){
+						last = points[j];
+						i = j;
 					}
 				}
 			}
 			StdOut.println();
+			first.drawTo(last);
+			StdDraw.show(0);
+			first = null;
+			last = null;
 		}
 		StdOut.println();
 		/*for (int i = 0; i < points.length; i++) {
