@@ -14,7 +14,7 @@ public class Brute {
 		
 		Init();
 		//!!! Before publish change to args[0]
-		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input200.txt";//args[0];
+		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input10.txt";//args[0];
 		//String filename = args[0];
 		In in = new In(filename);
         int N = in.readInt();

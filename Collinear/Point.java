@@ -27,20 +27,12 @@ public class Point implements Comparable<Point> {
 		
 		public int compare(Point o1, Point o2) {
 			
-			if(p.equals(o2) || p.equals(o1))
-				return o1.compareTo(o2);
-			
-			double value = Math.abs(p.slopeTo(o1) - p.slopeTo(o2));
+			double value = p.slopeTo(o1) - p.slopeTo(o2);
 									
 			if (value > 0)
 				return 1;
 			else if (value < 0)
 				return -1;
-			else if (p.slopeTo(o1) == 0.0 || p.slopeTo(o2) == 0.0) {
-				return o1.compareTo(o2);
-			}
-			else if (value == 0.0)
-				return o1.compareTo(o2);
 			else return 0;
 		}
     }
@@ -72,7 +64,10 @@ public class Point implements Comparable<Point> {
 
     // slope between this point and that point
     public double slopeTo(Point that) {
-        /* YOUR CODE HERE */
+        if (that == null) {
+            throw new NullPointerException();
+        }
+    	
     	double ys = that.y - this.y;
     	double xs = that.x - this.x;
     	
@@ -92,7 +87,10 @@ public class Point implements Comparable<Point> {
     // is this point lexicographically smaller than that one?
     // comparing y-coordinates and breaking ties by x-coordinates
     public int compareTo(Point that) {
-        /* YOUR CODE HERE */
+    	if (that == null) {
+            throw new NullPointerException();
+        }
+    	
     	if(this.y < that.y || this.y == that.y && this.x < that.x){
     		return -1;
     	}
@@ -109,6 +107,12 @@ public class Point implements Comparable<Point> {
 
     // unit test
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point p1 = new Point(10000, 0);
+        Point p2 = new Point(6000, 7000);
+        Point p3 = new Point(0, 10000);
+        
+        StdOut.println(p1.slopeTo(p2));
+        StdOut.println(p1.slopeTo(p3));
+        
     }
 }
