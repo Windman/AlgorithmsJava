@@ -12,8 +12,6 @@
 
 import java.util.Comparator;
 
-import org.omg.CORBA.portable.ApplicationException;
-
 public class Point implements Comparable<Point> {
 
 	private final class BySlope implements Comparator<Point>
@@ -38,7 +36,7 @@ public class Point implements Comparable<Point> {
     }
 	
 	// compare points by slope
-    public final Comparator<Point> SLOPE_ORDER = new BySlope(this) ;       // YOUR DEFINITION HERE
+    public final Comparator<Point> SLOPE_ORDER = new BySlope(this);       // YOUR DEFINITION HERE
 
     private final int x;                              // x coordinate
     private final int y;                              // y coordinate
@@ -75,7 +73,7 @@ public class Point implements Comparable<Point> {
     		return Double.POSITIVE_INFINITY;
     	else if (xs == 0 && ys < 0)
     		return Double.POSITIVE_INFINITY;
-    	else if(xs > 0 && ys == 0) 
+    	else if (xs > 0 && ys == 0) 
     		return 0.0;
     	else if (xs < 0 && ys == 0)
     		return 0.0;
@@ -91,7 +89,7 @@ public class Point implements Comparable<Point> {
             throw new NullPointerException();
         }
     	
-    	if(this.y < that.y || this.y == that.y && this.x < that.x){
+    	if(this.y < that.y || this.y == that.y && this.x < that.x) {
     		return -1;
     	}
     	else if (this.y == that.y || this.x == that.x)

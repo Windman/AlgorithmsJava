@@ -1,27 +1,24 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class Fast {
-
-	private static void Init() {
+	
+	private static void init() {
 		StdDraw.setXscale(0, 32768);
 		StdDraw.setYscale(0, 32768);
 		StdDraw.show(0);
 		StdDraw.setPenRadius(0.01);
 	}
-
+	
 	public static void main(String[] args) {
-		Init();
-		// !!! Before publish change to args[0]
-		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input20.txt";// args[0];
-		// String filename = args[0];
+		init();
+		// !!! Before publish change to args[0]7
+		//String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input8.txt";// args[0];
+		String filename = args[0];
 		In in = new In(filename);
 		int N = in.readInt();
 		Point[] points = new Point[N];
+		
 		for (int i = 0; i < N; i++) {
 			int x = in.readInt();
 			int y = in.readInt();
@@ -32,47 +29,85 @@ public class Fast {
 		StdDraw.show(0);
 		StdDraw.setPenRadius();
 		
-		ArrayList<Point> map =new ArrayList<Point>();
-		Stack<Double> st = new Stack<Double>();
-		for (int i = 0; i < points.length; i++) {
+		Arrays.sort(points);
+		
+		Point[] sorted = new Point[N];
+		System.arraycopy(points, 0, sorted, 0, N);
+		
+		ArrayList<PointPath> map = new ArrayList<Fast.PointPath>();
+				
+		for (int i = 0; i < points.length -3; i++) {
+			System.arraycopy(sorted, 0, points, 0, N);
 			Arrays.sort(points, points[i].SLOPE_ORDER);
-			for (int j = i + 1; j < points.length; j++) {
-				if (i == j)
-					continue;
-				for (int k = 1; k < points.length; k++) {
-					if (j == k)
-						continue;
-					
-					if (points[i].slopeTo(points[j]) == points[i].slopeTo(points[k])) {
-						if (!map.contains(points[j])) {
-							map.add(points[j]);
-						}
-						//StdOut.println(points[i] + " " + points[j].toString()+ " " + points[i].slopeTo(points[j]));
-						
-						//Draw
-						if (map.size()>2) {
-							//Print
-							map.add(points[i]);
-							Collections.sort(map);
-							
-							Point first = map.get(0);
-							Point last = map.get(map.size()-1);
-							
-							for(Point p: map) {
-								StdOut.print(p.toString());
-							}
-							StdOut.println();
-							
-							first.drawTo(last);
-							StdDraw.show(0);
-							map.clear();
-						}
-						break;
+			
+			int idx = 1;
+			int j = 2;
+			double slope1 = points[0].slopeTo(points[idx]);
+			
+			while (j < points.length) {
+				double slope2 = points[0].slopeTo(points[j]);
+				
+				if (slope1 != slope2 || j == points.length -1) {
+					if (slope1 == slope2) {
+						j++;
 					}
-				} //end k for
-			} //end j for
-			StdOut.println();
+					
+					if (j >= idx +3 && !isInPath(map, points[0], slope1))
+					{
+						StdOut.print(points[0]);
+						addPoint(map, points[0], slope1);
+						
+						for (int z = idx; z < j; z++) {
+                            System.out.print(" -> " + points[z]);
+                            addPoint(map, points[z], slope1);
+                        }
+						
+						points[0].drawTo(points[j-1]);
+						StdDraw.show(0);
+						
+						StdOut.println();
+					}
+					idx = j;
+					slope1 = slope2;
+				}
+				j++;
+			}
 		}
-		StdOut.println();
+		/*
+		for(Point p: map.keySet())
+		{
+			StdOut.print(p);
+		}*/
+	}
+		
+	private static boolean isInPath(ArrayList<PointPath> map, Point p, double slope) {
+		for (PointPath pp: map) {
+			if (pp.point.compareTo(p) == 0) {
+				for(double s: pp.slopes) {
+					if (s == slope)
+						return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private static void addPoint(ArrayList<PointPath> map, Point p, double slope) {
+		PointPath path = new PointPath();
+		path.point = p;
+		path.slopes.add(slope);
+		map.add(path);
+	}
+	
+	private static final class PointPath {
+		
+		PointPath()
+		{
+			slopes = new ArrayList<Double>();
+		}
+		
+		public Point point;
+		public ArrayList<Double> slopes;
 	}
 }
