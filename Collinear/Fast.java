@@ -13,8 +13,8 @@ public class Fast {
 	public static void main(String[] args) {
 		init();
 		// !!! Before publish change to args[0]7
-		//String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input8.txt";// args[0];
-		String filename = args[0];
+		String filename = "C:\\_SourcesJava\\AlgorithmsJava\\Collinear\\Tests\\input8.txt";// args[0];
+		//String filename = args[0];
 		In in = new In(filename);
 		int N = in.readInt();
 		Point[] points = new Point[N];
@@ -41,10 +41,11 @@ public class Fast {
 			Arrays.sort(points, points[i].SLOPE_ORDER);
 			
 			int idx = 1;
-			int j = 2;
+			//int j = 2;
 			double slope1 = points[0].slopeTo(points[idx]);
 			
-			while (j < points.length) {
+			for (int j = 2; j< points.length;) {
+			//while (j < points.length) {
 				double slope2 = points[0].slopeTo(points[j]);
 				
 				if (slope1 != slope2 || j == points.length -1) {
