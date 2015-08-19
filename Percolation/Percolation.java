@@ -1,7 +1,7 @@
 /**
  * @author Maksim Kilovatiy Percolation implementation
  */
-
+import edu.princeton.cs.algs4.*;
 public class Percolation {
 
 	/**

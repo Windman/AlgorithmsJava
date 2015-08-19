@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import edu.princeton.cs.algs4.*;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 

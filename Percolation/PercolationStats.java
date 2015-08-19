@@ -2,6 +2,7 @@
  * @author Maksim Kilovatiy PercolationStats implementation perform T
  *         independent experiments on an N-by-N grid
  */
+import edu.princeton.cs.algs4.*;
 public class PercolationStats {
 
 	private int size;

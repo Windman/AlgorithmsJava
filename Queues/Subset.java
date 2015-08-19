@@ -1,3 +1,5 @@
+import edu.princeton.cs.algs4.*;
+
 public class Subset {
 
 	public static void main(String[] args) {

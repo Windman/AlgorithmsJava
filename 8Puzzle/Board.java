@@ -1,20 +1,20 @@
 import java.io.ObjectInputStream.GetField;
+import java.util.Comparator;
 
+import edu.princeton.cs.algs4.*;
 
-public final class Board {
+public final class Board{
     
 	private final int N;
 	private final int[][] tiles;
+	private int[][] twins;
 	
 	public Board(int[][] blocks) {
-    	// construct a board from an N-by-N array of blocks
-    	// (where blocks[i][j] = block in row i, column j)
-    	//You may assume that the constructor receives an N-by-N array containing the N2 integers between 0 and N2 − 1, where 0 represents the blank square
-		if (blocks == null) throw new java.lang.NullPointerException();
-		//TODO implement validation
+    	if (blocks == null) throw new java.lang.NullPointerException();
 		
 		N = blocks[0].length;
 		tiles = blocks.clone();
+		twins = null;
 	}
     
     public int dimension() {
@@ -32,8 +32,6 @@ public final class Board {
     	for (int i = 0; i < N; i++) {
     		for (int j = 0; j < N; j++) {
     			int pos = position(i+1,j+1);
-    			int lastIdx = N-1;
-    			//System.out.println(" i:" + i + " j: "+ j +" block: "+tiles[i][j]+" pos: " +pos);
     			if (tiles[i][j] == 0) {
     				continue;
     			}
@@ -69,19 +67,55 @@ public final class Board {
     	}
     	return h;
     }
+    
     public boolean isGoal() {
     	// is this board the goal board?
-    	return false;
+    	for (int row = 0; row < N; row++) {
+			for (int col = 0; col < N; col++) {
+    			if (tiles[row][col] == 0)
+    				continue;
+				if (tiles[row][col] != position(row+1, col+1))
+    				return false;
+    		}
+    	}
+    	return true;
     }
+    
+    private static void exch(int[] v, int i, int j) {
+        int swap = v[i];
+        v[i] = v[j];
+        v[j] = swap;
+    }
+    
     public Board twin() {
     	// a board that is obtained by exchanging two adjacent blocks in the same row
-    	return this;
+    	twins = tiles.clone();
+    	int rndRow = StdRandom.uniform(0, N-1);
+    	int rndCol1 = 0;
+    	int rndCol2 = 0;
+    	
+    	while(true) {
+    		rndCol1 = StdRandom.uniform(0, N-1);
+        	rndCol2 = StdRandom.uniform(0, N-1);
+        	if (rndCol1 != rndCol2)
+        		break;
+    	}
+    			
+    	exch(twins[rndRow], rndCol1, rndCol2);
+    	
+    	return new Board(twins);
     }
-    public boolean equals(Object y) {
+    
+    public boolean equals(Object other) {
     	// does this board equal y?
-    	if (y == null) throw new java.lang.NullPointerException();
-    	return false;
+    	if (other == this) return true;
+        if (other == null) return false;
+        if (other.getClass() != this.getClass()) return false;
+        Board that = (Board) other;
+        if (this.manhattan() != that.manhattan()) return false;
+        return true;
     }
+    
     public Iterable<Board> neighbors() {
     	// all neighboring boards
     	return null;
@@ -99,17 +133,20 @@ public final class Board {
         }
         return s.toString();
     }
-
+    
     public static void main(String[] args) {
     	
     	int n = 2;
     	int[][] data = new int[][]{{1,2}, {3,0}};
     	int[][] data2_2 = new int[][]{{2,0}, {3,1}};
     	int[][] data3_3 = new int[][]{{8,1,3}, {4,0,2}, {7,6,5}};
-  
+    	int[][] data3_3_g = new int[][]{{1,2,3}, {4,5,6}, {7,8,0}};
+    	
     	Board b = new Board(data);
     	Board b2_2 = new Board(data2_2);
     	Board b3_3 = new Board(data3_3);
+    	Board b3_3_g = new Board(data3_3_g);
+    	
     	System.out.println("Print board 3*3");
     	System.out.println(b3_3.toString());
     	
@@ -154,5 +191,19 @@ public final class Board {
     	System.out.println("2*2 "+b.manhattan()+ " == 0" );
     	System.out.println("2*2 "+b2_2.manhattan()+" == 3");
     	System.out.println("3*3 "+b3_3.manhattan()+" == 10");
+    	
+    	//Is Goal
+    	assert(b3_3.isGoal() == false);
+    	assert(b3_3_g.isGoal() == true);
+    	
+    	//Is Equal
+    	assert(b2_2.equals(b3_3) == false);
+    	assert(b3_3.equals(b3_3_g) == false);
+    	assert(b3_3.equals(b3_3) == true);
+    	
+    	System.out.println(b3_3.toString());
+    	System.out.println(b3_3.twin().toString());
     }
+
+	
 }

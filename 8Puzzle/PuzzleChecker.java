@@ -1,3 +1,4 @@
+
 /*************************************************************************
  *  Compilation:  javac PuzzleChecker.java
  *  Execution:    java PuzzleChecker filename1.txt filename2.txt ...
@@ -24,7 +25,7 @@
  *  puzzle45.txt: 45
  *
  *************************************************************************/
-
+import edu.princeton.cs.algs4.*;
 public class PuzzleChecker {
 
     public static void main(String[] args) {

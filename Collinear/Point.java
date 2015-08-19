@@ -9,6 +9,7 @@
  * Description: An immutable data type for points in the plane.
  *
  *************************************************************************/
+import edu.princeton.cs.algs4.*;
 
 import java.util.Comparator;
 

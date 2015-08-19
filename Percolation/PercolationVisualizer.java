@@ -15,7 +15,7 @@
  *  with with site (1, 1) in the upper left-hand corner.
  *
  ****************************************************************************/
-
+import edu.princeton.cs.algs4.*;
 import java.awt.Font;
 
 public class PercolationVisualizer {
