@@ -30,7 +30,7 @@ public class PuzzleChecker {
 
     public static void main(String[] args) {
 
-        args = new String[]{"C:\\_SourcesJava\\AlgorithmsJava\\8Puzzle\\Tests\\puzzle2x2-00.txt"};
+        args = new String[]{"C:\\_SourcesJava\\AlgorithmsJava\\8Puzzle\\Tests\\puzzle08.txt"};
     	// for each command-line argument
         for (String filename : args) {
 
@@ -47,7 +47,16 @@ public class PuzzleChecker {
             // solve the slider puzzle
             Board initial = new Board(tiles);
             Solver solver = new Solver(initial);
-            System.out.println(filename + ": " + solver.moves());
+            
+            if (!solver.isSolvable())
+		        StdOut.println("No solution possible");
+		    else {
+		        StdOut.println("Minimum number of moves = " + solver.moves());
+		        for (Board board : solver.solution()) {
+		        	StdOut.println("M:"+board.manhattan());
+		        	StdOut.println(board.toString());
+		        }
+		    }
         }
     }
 }
