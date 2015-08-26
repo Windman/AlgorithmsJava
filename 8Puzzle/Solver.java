@@ -30,7 +30,8 @@ public class Solver {
 			else return 0;
 		}
     }
-	private int moves;
+	
+    private int moves;
 	private boolean solved;
 	private final Comparator<Board> ByPriority = new ByPriority(this);
 	private ArrayList<Board> track;
@@ -65,6 +66,7 @@ public class Solver {
 					minQ.insert(b);
 				}
 			}
+			
 			if (!minQ.isEmpty()) {
 				current = minQ.delMin();
 				if (current.isGoal()) {
