@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /Board.class
 /Brute.class
 /Fast$PointPath.class
@@ -24,3 +25,8 @@
 /PointSET.zip
 /kdtree.zip
 /alg/
+=======
+/Tests/
+/alg/
+/interview/
+>>>>>>> d2157206b8b4d894477498e01ce1c680af259a49
