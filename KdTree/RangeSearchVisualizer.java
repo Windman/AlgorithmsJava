@@ -34,7 +34,7 @@ public class RangeSearchVisualizer {
             double y = in.readDouble();
             Point2D p = new Point2D(x, y);
             kdtree.insert(p);
-            brute.insert(p);
+            //brute.insert(p);
         }
 
         double x0 = 0.0, y0 = 0.0;      // initial endpoint of rectangle
@@ -77,8 +77,9 @@ public class RangeSearchVisualizer {
             StdDraw.clear();
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius(.01);
-            brute.draw();
-
+            //brute.draw();
+            kdtree.draw();
+            
             // draw the rectangle
             StdDraw.setPenColor(StdDraw.BLACK);
             StdDraw.setPenRadius();

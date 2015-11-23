@@ -6,18 +6,20 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-//https://github.com/siyuano/coursera-algs4/blob/master/algs4-part1/week5-kdtree/src/main/java/KdTree.java
-	
 public class KdTree {
 
-	private Node root; // root of 2d-tree
+	private Node root; 
 	private int size;
 	private static RectHV defaultRt;
+	
+	private final double dotPr, linePr;
 	
 	public KdTree() {
 		size = 0;
 		root = null;
 		defaultRt = new RectHV(0.0, 0.0, 1.0, 1.0);
+		dotPr = .01;
+		linePr = .005;
 	}
 
 	public boolean isEmpty() {
@@ -30,12 +32,12 @@ public class KdTree {
 
 	public void insert(Point2D p) {
 		// add the point to the set (if it is not already in the set)
-		root = insert(null, root, p, true, defaultRt);
+		root = insert(root, p, true);
   	}
 	
-	private Node insert(Node parent, Node node, Point2D p, boolean odd, RectHV r) {
+	private Node insert(Node node, Point2D p, boolean odd) {
 		if (node == null) {
-			node = new Node(parent, p, null, null, odd, new RectHV(r.xmin(), r.ymin(), p.x(), r.ymax()));
+			node = new Node(p, null, null, odd);
 			size++;
 		}
 
@@ -44,18 +46,18 @@ public class KdTree {
 		
 		if (node.odd) {
 			if (Point2D.X_ORDER.compare(p, node.p) > 0) {
-				node.right = insert(node, node.right, p, !node.odd, new RectHV(r.xmin(), r.ymin(), p.x(), r.ymax()));
+				node.right = insert(node.right, p, !node.odd);
 			}
 			else {
-				node.left = insert(node, node.left, p, !node.odd, new RectHV(r.xmin(), r.ymin(), r.xmax(), p.y()));
+				node.left = insert(node.left, p, !node.odd);
 			}
 		}
 		else {
 			if (Point2D.Y_ORDER.compare(p, node.p) > 0) {
-				node.right = insert(node, node.right, p, !node.odd, new RectHV(p.x(), r.ymin(), r.xmax(), r.ymax()));
+				node.right = insert(node.right, p, !node.odd);
 			}
 			else {
-				node.left = insert(node, node.left, p, !node.odd, new RectHV(r.xmin(), p.y(), r.xmax(), r.ymax()));
+				node.left = insert(node.left, p, !node.odd);
 			}
 		}
 		
@@ -63,72 +65,116 @@ public class KdTree {
 	}
 
 	public boolean contains(Point2D p) {
-		// does the set contain point p?
-		return false;
+		Node node = root;
+		while(true) {
+			if (node == null)
+				return false;
+			
+			if (p.equals(node.p)) {
+                return true;
+            }
+			
+			if (node.odd) {
+				if (Point2D.X_ORDER.compare(p, node.p) > 0) {
+					node = node.right;
+				}
+				else {
+					node = node.left; 
+				}
+			}
+			else {
+				if (Point2D.Y_ORDER.compare(p, node.p) > 0) {
+					node = node.right; 
+				}
+				else {
+					node = node.left; 
+				}
+			}
+		}
 	}
 
 	public void draw() {
-		draw(root);
+		draw(root, defaultRt);
 	}
 	
-	public void draw(Node n){
+	private void draw(Node n, RectHV r){
 		if (n == null)
 			return;
 		
 		StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setPenRadius(.01);
+        StdDraw.setPenRadius(dotPr);
         n.p.draw();
         
 		Point2D from, to;
 		
 		if (n.odd) {
 			StdDraw.setPenColor(StdDraw.RED);
-			from = new Point2D(n.p.x(), n.rect.ymin());
-            if (n.parent != null)
-            	to = new Point2D(n.p.x(), n.parent.p.y());
-            else to = new Point2D(n.p.x(), n.rect.ymax());
+			from = new Point2D(n.p.x(), r.ymin());
+            to = new Point2D(n.p.x(), r.ymax());
 		}
 		else { 
 			StdDraw.setPenColor(StdDraw.BLUE);
-			from = new Point2D(n.rect.xmin(), n.p.y());
-			if (n.parent != null)
-				to = new Point2D(n.parent.p.x(), n.p.y());
-			else to = new Point2D(n.rect.xmax(), n.p.y());
+			from = new Point2D(r.xmin(), n.p.y());
+            to = new Point2D(r.xmax(), n.p.y());
 		}
 		
-        StdDraw.setPenRadius(.005);
-		from.drawTo(to);
-		
-		draw(n.left);
-		draw(n.right);
+        StdDraw.setPenRadius(linePr);
+        from.drawTo(to);
+        
+		draw(n.left, leftRectangle(n,r));
+		draw(n.right, rightRectangle(n,r));
 	}
+	
+	private RectHV leftRectangle(Node n, RectHV r) {
+        return n.odd
+                ? new RectHV(r.xmin(), r.ymin(), n.p.x(), r.ymax())
+                : new RectHV(r.xmin(), r.ymin(), r.xmax(), n.p.y());
+    }
 
+    private RectHV rightRectangle(Node node, RectHV nodeRect) {
+        return node.odd
+                ? new RectHV(node.p.x(), nodeRect.ymin(), nodeRect.xmax(), nodeRect.ymax())
+                : new RectHV(nodeRect.xmin(), node.p.y(), nodeRect.xmax(), nodeRect.ymax());
+    }
+    
 	public Iterable<Point2D> range(RectHV rect) {
 		// all points that are inside the rectangle
 		Queue<Point2D> q = new Queue<Point2D>();
+		range(rect, root, defaultRt, q);
 		return q;
 	}
 
+	private void range(RectHV queryRect, Node n, RectHV r, Queue<Point2D> ptsQueue) {
+		if (n == null) {
+            return;
+        }
+
+        if (queryRect.intersects(r)) {
+            if (queryRect.contains(n.p)) {
+            	ptsQueue.enqueue(n.p);
+            }
+
+            range(queryRect, n.left, leftRectangle(n, r), ptsQueue);
+            range(queryRect, n.right, rightRectangle(n, r), ptsQueue);
+        }
+	}
+	
 	public Point2D nearest(Point2D p) {
 		// a nearest neighbor in the set to point p; null if the set is empty
 		return new Point2D(0,0);
 	}
 	
 	private static class Node {
-		   private Node parent;
 		   private Point2D p;     
 		   private boolean odd;
 		   private Node left;       
 		   private Node right;       
-		   private RectHV rect;
-		   
-		   public Node(Node parent, Point2D p, Node lb, Node rt, boolean odd, RectHV rect){
-			   this.parent = parent;
+		    
+		   public Node(Point2D p, Node lb, Node rt, boolean odd){
 			   this.p = p;
 			   this.left = lb;
 			   this.right = rt;
 			   this.odd = odd;
-			   this.rect = rect;
 		   }
 		   
 		   @Override
@@ -141,8 +187,12 @@ public class KdTree {
 		KdTree t = new KdTree();
 		t.insert(new Point2D(.7,.2));
 		t.insert(new Point2D(.5,.4));
-				
-		t.draw();
+		t.insert(new Point2D(.1,.2));
+		t.insert(new Point2D(.3,.5));
+		t.insert(new Point2D(.6,.6));
+		t.insert(new Point2D(.5,.9));
+		
+		StdOut.println("Contains: " + t.contains(new Point2D(.5,.9)));
 		
 		StdOut.println("OK");
 	}
