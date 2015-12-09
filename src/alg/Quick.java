@@ -2,10 +2,6 @@ package alg;
 
 public class Quick {
 
-	public static void Sort(int[] data, int p, int r) {
-		Partition(data, p, r);	
-	}
-	
 	public static void Partition(int[] data, int p, int r)
 	{
 		int rIndex = r-1;

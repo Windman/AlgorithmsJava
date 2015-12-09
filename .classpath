@@ -6,6 +6,8 @@
 	<classpathentry kind="src" path="Collinear"/>
 	<classpathentry kind="src" path="8Puzzle"/>
 	<classpathentry kind="src" path="KdTree"/>
+	<classpathentry kind="src" path="Graphs"/>
+	<classpathentry kind="src" path="Teads"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="external/algs4.jar"/>
 	<classpathentry kind="output" path="bin"/>
