@@ -7,7 +7,7 @@ public class ArraysAndStrings {
 	public static void main(String[] args) {
 				
 	}
-	
+			
 	public void TransformString_1_4()
 	{
 		String input = "Mr John Smith Black      ";
@@ -57,3 +57,5 @@ public class ArraysAndStrings {
 	    return ret;
 	}
 }
+
+
