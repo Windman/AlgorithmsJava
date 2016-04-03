@@ -1,64 +1,52 @@
 package CCtC;
 
 import java.util.ArrayList;
-
+//Решение с координатами не подойдет, т.к. Point Занимает в пямяти больше 4 байт
 public class Matrix {
 
-	Point[][] _matrix;
-	int N;
+	int[][] _matrix;
+	int _n, _m;
 	
-	Matrix(Point[][] matrix)
+	Matrix(int N, int M)
 	{
-		_matrix = matrix;
-		N = _matrix.length;
-	}
-
-	static class Point
-	{
-		int X, Y, Color, Val;
+		_n = N;
+		_m = M;
+		_matrix = new int[N][M];
+		int value = 0;
 		
-		Point(int x, int y, int v)
-		{
-			X = x;
-			Y = y;
-			Color = 0;
-			Val = v;
-		}
-		
-		public String toString(){
-			return ""+Val;
-		}
-	}
-			
-	public int getDimention(){
-		return _matrix.length;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				_matrix[i][j] = ++value;
+			}
+		}		
 	}
 	
-	public int getNewX(int Y) {
-		return Y;
-	}
-
-	public int getNewY(int X) {
-		return N - X -1;
-	}
-
-	public void Rotate90(int X, int Y) {
+	public void Rotate90() {
 		
-		if (_matrix[X][Y].Color == 1)
-			return;
-		
-		int x = getNewX(X);
-		int y = getNewY(Y);
-		_matrix[X][Y].Color = 1;
-		
-		Rotate90(x,y);
+		for (int layer = 0; layer < _m / 2; ++layer) {
+			int first = layer;
+			int last = _m - 1 - layer;
+			for (int i = first; i < last; ++i) {
+				int offset = i - first;
+				//save top
+				int top = _matrix[first][i];
+				//left -> top
+				_matrix[first][i] = _matrix[last- offset][first];
+				//bottom -> left
+				_matrix[last-offset][first] = _matrix[last][last-offset];
+				//right -> bottom
+				_matrix[last][last-offset] = _matrix[i][last];
+				//top -> right
+				_matrix[i][last] = top;
+			}
+		}
 	}
 		
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				sb.append(_matrix[i][j].toString());
+		for (int i = 0; i < _n; i++) {
+			for (int j = 0; j < _m; j++) {
+				sb.append(_matrix[i][j]);
 			}
 			sb.append("\r\n");
 		}
@@ -67,18 +55,8 @@ public class Matrix {
 	
 	//Проверить 
 	public static void main(String[] args) {
-		int dimention = 3;
-		
-		int v = 1;
-		Point[][] matrix = new Point[dimention][dimention];
-		for (int i = 0; i < dimention; i++) {
-			for (int j = 0; j < dimention; j++) {
-				matrix[i][j] = new Point(i, j, v++);
-			}
-		}
-		
-		Matrix m = new Matrix(matrix);
-		m.Rotate90(0,0);
-		m.toString();
+		Matrix m = new Matrix(3,3);
+		m.Rotate90();
+		System.out.println(m.toString());
 	}
 }

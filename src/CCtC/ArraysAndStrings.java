@@ -5,10 +5,20 @@ import java.util.*;
 public class ArraysAndStrings {
 
 	public static void main(String[] args) {
-				
+		Rotate_1_6();
 	}
-			
-	public void TransformString_1_4()
+	
+	public static void Rotate_1_6(){
+		
+		Matrix m = new Matrix(2,4);
+		System.out.println(m.toString());
+		System.out.println();
+		m.Rotate90();
+		System.out.println(m.toString());
+	}
+	
+	
+	public static void TransformString_1_4()
 	{
 		String input = "Mr John Smith Black      ";
 		char[] str = input.toCharArray();
