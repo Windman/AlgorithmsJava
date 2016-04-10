@@ -4,17 +4,15 @@ import java.util.HashMap;
 
 class Card {
 	String start, end;
-	int color;
-	
+		
 	public Card(String startCity, String endCity) {
 		start = startCity;
 		end = endCity;
-		color = 0;
 	}
 	
 	@Override
 	public String toString(){
-		return start +" "+ end + " " + color;
+		return start +" "+ end;
 	}
 }
 
@@ -25,24 +23,32 @@ public class TripCardsSort {
 		Card[] path = new Card[cards.length];
 		
 		for (int i = 0; i < cards.length; i++) {
-			map.put(cards[i].start, i);
+			map.put(cards[i].end, i);
 		}
 				
-		Integer endIdx = 0;
+		Integer startIdx = 0;
 		for (int i = 0; i < cards.length; i++) {
-			if (!map.containsKey(cards[i].end))  
-				endIdx = i;
+			if (!map.containsKey(cards[i].start)) {
+				startIdx = i;
+				break;
+			}
 		}
 		
-		String nextCity = cards[endIdx].start;
-		for (int i = cards.length; i >= 0; i--) {
+		map.clear();
+		for (int i = 0; i < cards.length; i++) {
+			map.put(cards[i].start, i);
+		}
+		
+		String nextCity = cards[startIdx].end;
+		path[0] = cards[startIdx];
+		for (int i = 1; i < cards.length; i++) {
 			Integer nextIdx = map.get(nextCity);
 			path[i] = cards[nextIdx];
-			nextCity = path[i].start;
+			nextCity = path[i].end;
 			
 		}
 		
-		return null;
+		return path;
 		
 	}
 	
