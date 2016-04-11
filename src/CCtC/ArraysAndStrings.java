@@ -45,7 +45,7 @@ public class ArraysAndStrings {
 			System.out.print(str[i]);
 		}
 	}
-	
+		
 	public static int[] convertIntegers(ArrayList<Integer> integers)
 	{
 	    int[] ret = new int[integers.size()];
