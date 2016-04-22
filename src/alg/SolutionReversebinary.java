@@ -1,3 +1,5 @@
+package alg;
+
 import java.util.Scanner;
 
 public class SolutionReversebinary {
