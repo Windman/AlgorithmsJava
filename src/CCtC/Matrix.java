@@ -18,7 +18,7 @@ public class Matrix {
 			for (int j = 0; j < M; j++) {
 				_matrix[i][j] = ++value;
 			}
-		}		
+		}
 	}
 	
 	public void Rotate90() {
